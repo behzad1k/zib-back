@@ -66,6 +66,7 @@ class OrderController {
     order.service = serviceObj
     order.user = user
     order.status = orderStatuses.CREATED
+    order.attribute = attributeObj
     const errors = await validate(order);
     if (errors.length > 0) {
       res.status(400).send(errors);

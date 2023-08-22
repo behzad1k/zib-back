@@ -8,8 +8,10 @@ class ServiceController {
   static index = async (req: Request, res: Response): Promise<Response> => {
     const serviceRepository = getRepository(Service);
     const services = await serviceRepository.find({
-      relations:
-        ['children']
+      relations: ['children'],
+      where: {
+        parentId: null
+      }
     });
     return res.status(200).send({
       code: 200,
