@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getConnection, getRepository } from "typeorm";
+import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 import { Order } from "../../entity/Order";
 import { Service } from "../../entity/Service";

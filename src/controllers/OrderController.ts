@@ -3,7 +3,7 @@ import * as jwtDecode from "jwt-decode";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 import { Order } from "../entity/Order";
-import {Service} from "../entity/Service";
+import { Service } from "../entity/Service";
 import { User } from "../entity/User";
 import { orderStatuses } from "../utils/consts";
 
