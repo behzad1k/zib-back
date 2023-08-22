@@ -10,6 +10,8 @@ import { generateOTPCode, getUserId, omit } from "../utils/funs";
 import { roles } from "../utils/consts";
 
 class UserController {
+  static users = () => getRepository(User)
+
   // Authentication
   static signJWT = async (user: { id: any; role: any },exp?): Promise<string> => {
     const token = jwt.sign(
@@ -86,6 +88,17 @@ class UserController {
     });
   }
 
+  static getUser = async (req: Request, res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const id: number = token.userId;
+    let user;
+    try{
+      user = await this.users().findOneOrFail(id)
+    }catch (e){
+      return res.status(400).send({'code' : 400, 'data': 'Invalid User'})
+    }
+    return res.status(200).send({'code': 200, 'data' : user});
+  }
   static changePassword = async (req: Request, res: Response): Promise<Response> => {
     // Get ID from JWT
     const token: any = jwtDecode(req.headers.authorization);

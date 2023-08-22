@@ -18,5 +18,8 @@ export class AuthRoutes {
     this.router.post("/login", UserController.login);
     // Auth check
     this.router.post("/check", UserController.authCheck);
+
+    this.router.get("/user", this.authController.authenticateJWT, UserController.getUser);
+
   }
 }

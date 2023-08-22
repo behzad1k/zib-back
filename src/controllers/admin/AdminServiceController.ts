@@ -22,7 +22,7 @@ class AdminServiceController {
           }
         })
       }catch (e){
-        return res.status(400).send({"code": 400, 'message':'Invalid Parent'})
+        return res.status(400).send({"code": 400, 'message': 'Invalid Parent'})
       }
     }
     const service = new Service();
