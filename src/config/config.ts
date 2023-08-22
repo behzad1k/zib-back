@@ -1,5 +1,5 @@
 export default {
-  jwtSecret: "shahabisis",
+  jwtSecret: "aidaShahabi",
   issuer: "behzad",
   audience: "behzad",
   expiration: "7d",

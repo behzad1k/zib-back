@@ -6,7 +6,7 @@ import { User } from "../entity/User";
 import * as jwt from "jsonwebtoken";
 import * as jwtDecode from "jwt-decode";
 import { Service } from "../entity/Service";
-import { generateOTPCode, getUserId } from "../utils/funs";
+import { generateOTPCode, getUserId, omit } from "../utils/funs";
 import { roles } from "../utils/consts";
 
 class UserController {
@@ -58,6 +58,9 @@ class UserController {
 
   static authCheck = async (req: Request, res: Response): Promise<Response> => {
     const {token, code} = req.body
+    if (! token && code){
+      return res.status(400).send({'message': 'Bad Request'})
+    }
     const userId = getUserId(token)
     const userRepository = getRepository(User);
     let user: User;
@@ -76,6 +79,7 @@ class UserController {
     }catch (e){
       return res.status(409).send({'code': 409, 'data': 'error try again later'})
     }
+
     return res.status(200).send({
       user: user,
       token: newToken
@@ -115,7 +119,7 @@ class UserController {
       return;
     }
     // Hash the new password and save
-    user.hashPassword();
+    // user.hashPassword();
     userRepository.save(user);
 
     return res.status(204).send();

@@ -25,7 +25,18 @@ export const getSlug = async (repository: Repository<any>, value:string ) => {
         }
     })){
         slug = slug + index
+        await repository.findOne({
+            where: {
+                slug: slug
+            }
+        });
         ++index;
     }
-    return value;
+    return slug;
+}
+
+export const omit = (keys, obj) => {
+    if (!keys.length) return obj
+    const { [keys.pop()]: omitted, ...rest } = obj;
+    return omit(keys, rest);
 }

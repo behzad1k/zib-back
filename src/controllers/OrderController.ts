@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import * as jwtDecode from "jwt-decode";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
-import { Attribute } from "../entity/Attribute";
 import { Order } from "../entity/Order";
 import {Service} from "../entity/Service";
 import { User } from "../entity/User";
@@ -13,7 +12,6 @@ class OrderController {
   static users = () => getRepository(User)
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
-  static attributes = () => getRepository(Attribute)
   static index = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;

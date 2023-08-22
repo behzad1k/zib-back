@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Attribute } from "./Attribute";
 import { Service } from "./Service";
 import { User } from "./User";
 
@@ -43,9 +42,9 @@ export class Order {
   @JoinColumn({name: 'userId', referencedColumnName: 'id'})
   user: User
 
-  @ManyToOne(() => Attribute, (attribute) => attribute.orders, { nullable: true} )
+  @ManyToOne(() => Service, (service) => service.orders, { nullable: true} )
   @JoinColumn({name: 'attributeId', referencedColumnName: 'id'})
-  attribute: Attribute
+  attribute: Service
 
   @ManyToOne(() => Service, (service) => service.orders)
   @JoinColumn({name: 'serviceId', referencedColumnName: 'id'})

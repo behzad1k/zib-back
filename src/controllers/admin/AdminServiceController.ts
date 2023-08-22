@@ -12,12 +12,25 @@ class AdminServiceController {
   static services = () => getRepository(Service)
 
   static create = async (req: Request, res: Response): Promise<Response> => {
-    const { title, description, price } = req.body;
+    const { title, description, price, parent } = req.body;
+    let parentObj;
+    if (parent){
+      try {
+        parentObj = await this.services().findOne({
+          where: {
+            slug: parent
+          }
+        })
+      }catch (e){
+        return res.status(400).send({"code": 400, 'message':'Invalid Parent'})
+      }
+    }
     const service = new Service();
     service.title = title;
     service.description = description;
     service.price = parseFloat(price);
-    service.slug = await getSlug(this.services(),service.title)
+    service.slug = await getSlug(this.services(),title)
+    service.parentId = parentObj?.id
     const errors = await validate(service);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -33,41 +46,49 @@ class AdminServiceController {
   };
 
   static update = async (req: Request, res: Response): Promise<Response> => {
-    const { id, title, description, price } = req.body;
-    let service: Service;
+    const { service, title, description, price } = req.body;
+    let serviceObj: Service;
     try {
-      service = await this.services().findOneOrFail(id);
+      serviceObj = await this.services().findOneOrFail({
+        where: {
+          slug: service
+        }
+      });
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid Id"});
       return;
     }
-    service.title = title;
-    service.description = description;
-    service.price = parseFloat(price);
-    const errors = await validate(service);
+    serviceObj.title = title;
+    serviceObj.description = description;
+    serviceObj.price = parseFloat(price);
+    const errors = await validate(serviceObj);
     if (errors.length > 0) {
       return res.status(400).send(errors);
     }
     try {
-      await this.services().save(service);
+      await this.services().save(serviceObj);
     } catch (e) {
       res.status(409).send("error try again later");
       return;
     }
-    return res.status(200).send({code: 400, data: service});
+    return res.status(200).send({code: 400, data: serviceObj});
   };
 
   static delete = async (req: Request, res: Response): Promise<Response> => {
-    const id: number = req.body.id
-    let service;
+    const service: number = req.body.service
+    let serviceObj;
     try {
-      await this.services().findOneOrFail(id);
+      serviceObj = await this.services().findOneOrFail({
+        where: {
+          slug: service
+        }
+      });
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid Id"});
       return;
     }
     try{
-      await this.services().delete(id);
+      await this.services().delete(serviceObj.id);
 
     }catch (e){
       res.status(409).send("error try again later");

@@ -2,18 +2,12 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  ManyToOne, JoinColumn, OneToMany,JoinTable
+  ManyToOne, JoinColumn, OneToMany
 } from "typeorm";
-import { Length, IsNotEmpty, IsEmail } from "class-validator";
-import * as bcrypt from "bcryptjs";
-import { Attribute } from "./Attribute";
+import { Length } from "class-validator";
 import { Order } from "./Order";
-import {User} from "./User";
-import {Like} from "./Like";
 
 @Entity()
 export class Service {
@@ -32,6 +26,11 @@ export class Service {
   @Length(3, 100)
   description: string;
 
+  @Column({
+    nullable: true
+  })
+  parentId: string;
+
   @Column()
   price: number;
 
@@ -43,11 +42,15 @@ export class Service {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Attribute, (attribute) => attribute.service)
-  attributes: Attribute[]
-
   @OneToMany(() => Order, (order) => order.service)
   orders: Order[]
+
+  @OneToMany(() => Service , service => service.parent)
+  children: Service[];
+
+  @ManyToOne(() => Service, service => service.children)
+  @JoinColumn({name: 'parentId', referencedColumnName: 'id'})
+  parent: Service
   // @ManyToMany(() => User,(user) => user.likedTweaks)
   // @JoinTable({
   //   name: "like",
