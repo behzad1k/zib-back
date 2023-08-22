@@ -8,7 +8,7 @@ class ServiceController {
   static index = async (req: Request, res: Response): Promise<Response> => {
     const serviceRepository = getRepository(Service);
     const services = await serviceRepository.find({
-      relations: ['children'],
+      relations: ['attributes'],
       where: {
         parentId: null
       }

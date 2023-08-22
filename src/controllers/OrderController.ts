@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as jwtDecode from "jwt-decode";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
+import { Address } from "../entity/Address";
 import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
@@ -13,6 +14,7 @@ class OrderController {
   static users = () => getRepository(User)
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
+  static addresses = () => getRepository(Address)
   static index = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
@@ -34,14 +36,23 @@ class OrderController {
   static create = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    let user, serviceObj, attributeObj;
+    let user, serviceObj, attributeObj, addressObj;
     try {
       user = await this.users().findOneOrFail(userId);
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
     }
-    const { service, attribute } = req.body;
+    const { service, attribute, date, time, addressId } = req.body;
+    try {
+      addressObj = await this.addresses().findOneOrFail(addressId, {
+        where: {
+          userId: user.id
+        }
+      })
+    }catch (e){
+      return res.status(400).send({'code': 400, data: 'Invalid Address'})
+    }
     try {
       serviceObj = await this.services().findOneOrFail({
         where: {
@@ -69,6 +80,7 @@ class OrderController {
     order.user = user
     order.status = orderStatuses.CREATED
     order.attribute = attributeObj
+    order.address = addressObj;
     // order.
     const errors = await validate(order);
     if (errors.length > 0) {

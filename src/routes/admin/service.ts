@@ -10,8 +10,8 @@ export class AdminServiceRoutes {
   }
 
   routes() {
-    this.router.post("/create", AdminServiceController.create);
-    this.router.put("/update", AdminServiceController.update);
-    this.router.delete("/delete", AdminServiceController.delete);
+    this.router.post("", AdminServiceController.create);
+    this.router.put("", AdminServiceController.update);
+    this.router.delete("", AdminServiceController.delete);
   }
 }

@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Length, IsNotEmpty, IsEmail } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import { Order } from "./Order";
 import {User} from "./User";
 import {Like} from "./Like";
 
@@ -48,6 +49,9 @@ export class Address {
   @ManyToOne(() => User, (user) => user.addresses)
   @JoinColumn({ name:"userId", referencedColumnName: "id"})
   user: User
+
+  @OneToMany(() => Order, (order) => order.address)
+  order: Order
 
   // @ManyToMany(() => User,(user) => user.likedTweaks)
   // @JoinTable({
