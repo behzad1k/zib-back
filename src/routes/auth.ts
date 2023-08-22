@@ -19,7 +19,5 @@ export class AuthRoutes {
     // Auth check
     this.router.post("/check", UserController.authCheck);
 
-    this.router.get("/user", this.authController.authenticateJWT, UserController.getUser);
-
   }
 }

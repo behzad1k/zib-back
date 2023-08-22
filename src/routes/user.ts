@@ -14,6 +14,7 @@ export class UserRoutes {
   }
 
   routes() {
+    this.router.get("/", this.authController.authenticateJWT, UserController.getUser);
     this.router.delete("/me", this.authController.authenticateJWT, UserController.deleteUser);
     this.router.put("/changePassword", this.authController.authenticateJWT, UserController.changePassword);
   }
