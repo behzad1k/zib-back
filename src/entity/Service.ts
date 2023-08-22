@@ -11,6 +11,7 @@ import {
 import { Length, IsNotEmpty, IsEmail } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import { Attribute } from "./Attribute";
+import { Order } from "./Order";
 import {User} from "./User";
 import {Like} from "./Like";
 
@@ -22,6 +23,10 @@ export class Service {
   @Column()
   @Length(3, 100)
   title: string;
+
+  @Column()
+  @Length(3, 100)
+  slug: string;
 
   @Column()
   @Length(3, 100)
@@ -40,6 +45,9 @@ export class Service {
 
   @OneToMany(() => Attribute, (attribute) => attribute.service)
   attributes: Attribute[]
+
+  @OneToMany(() => Order, (order) => order.service)
+  orders: Order[]
   // @ManyToMany(() => User,(user) => user.likedTweaks)
   // @JoinTable({
   //   name: "like",

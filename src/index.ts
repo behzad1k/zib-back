@@ -42,6 +42,6 @@ const server = new Server();
 
 // Connects to the Database -> then starts the express
 // eslint-disable-next-line @typescript-eslint/require-await
-createConnection().then(async () => {
+createConnection('default').then(async () => {
   server.start();
 });

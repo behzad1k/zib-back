@@ -7,7 +7,7 @@ import * as jwt from "jsonwebtoken";
 import * as jwtDecode from "jwt-decode";
 import { Service } from "../entity/Service";
 import { generateOTPCode, getUserId } from "../utils/funs";
-import { roles } from "../utils/roles";
+import { roles } from "../utils/consts";
 
 class UserController {
   // Authentication

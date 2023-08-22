@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { validate } from "class-validator";
+import { Order } from "../../entity/Order";
 import { Service } from "../../entity/Service";
+import { User } from "../../entity/User";
+import { getSlug } from "../../utils/funs";
 
 class AdminServiceController {
+  static users = () => getRepository(User)
+  static orders = () => getRepository(Order)
+  static services = () => getRepository(Service)
 
   static create = async (req: Request, res: Response): Promise<Response> => {
     const { title, description, price } = req.body;
@@ -11,14 +17,14 @@ class AdminServiceController {
     service.title = title;
     service.description = description;
     service.price = parseFloat(price);
+    service.slug = await getSlug(this.services(),service.title)
     const errors = await validate(service);
     if (errors.length > 0) {
       res.status(400).send(errors);
       return;
     }
-    const serviceRepository = getRepository(Service);
     try {
-      await serviceRepository.save(service);
+      await this.services().save(service);
     } catch (e) {
       res.status(409).send({"code": 409});
       return;
@@ -28,10 +34,9 @@ class AdminServiceController {
 
   static update = async (req: Request, res: Response): Promise<Response> => {
     const { id, title, description, price } = req.body;
-    const serviceRepository = getRepository(Service);
     let service: Service;
     try {
-      service = await serviceRepository.findOneOrFail(id);
+      service = await this.services().findOneOrFail(id);
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid Id"});
       return;
@@ -43,9 +48,8 @@ class AdminServiceController {
     if (errors.length > 0) {
       return res.status(400).send(errors);
     }
-
     try {
-      await serviceRepository.save(service);
+      await this.services().save(service);
     } catch (e) {
       res.status(409).send("error try again later");
       return;
@@ -55,18 +59,15 @@ class AdminServiceController {
 
   static delete = async (req: Request, res: Response): Promise<Response> => {
     const id: number = req.body.id
-    const serviceRepository = getRepository(Service);
-
     let service;
-
     try {
-      await serviceRepository.findOneOrFail(id);
+      await this.services().findOneOrFail(id);
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid Id"});
       return;
     }
     try{
-      await serviceRepository.delete(id);
+      await this.services().delete(id);
 
     }catch (e){
       res.status(409).send("error try again later");

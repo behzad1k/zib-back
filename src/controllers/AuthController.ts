@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as passport from "passport";
 import "../middlewares/passport";
-import { roles } from "../utils/roles";
+import { roles } from "../utils/consts";
 
 export default class AuthController {
   public authenticateJWT(req: Request, res: Response, next: NextFunction): void {
@@ -17,6 +17,21 @@ export default class AuthController {
     })(req, res, next);
   }
   public authorizeJWTAdmin(req: Request, res: Response, next: NextFunction): void {
+    passport.authenticate("jwt", (err, user) => {
+      if (err) {
+        return res.status(401).json({ status: "error", code: "401" });
+      }
+      if (!user) {
+        return res.status(401).json({ status: "error", code: "401" });
+      }
+      if (user.role !== roles.SUPER_ADMIN) {
+        return res.status(403).json({ status: "error", code: "403" });
+      } else {
+        return next();
+      }
+    })(req, res, next);
+  }
+  public authorizeJWTWoker(req: Request, res: Response, next: NextFunction): void {
     passport.authenticate("jwt", (err, user) => {
       if (err) {
         return res.status(401).json({ status: "error", code: "401" });

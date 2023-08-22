@@ -61,7 +61,7 @@ export class User {
   @OneToMany(() => Address , address => address.user, { eager: true })
   addresses: Address[];
 
-  @OneToMany(() => Order, order => order.user)
+  @OneToMany(() => Order, order => order.user,{ eager: true })
   orders: Order[]
 
   @OneToMany(() => Order, order => order.worker, { nullable: true})
