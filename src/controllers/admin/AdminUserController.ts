@@ -13,7 +13,8 @@ class AdminUserController {
   static services = () => getRepository(Service)
 
   static index = async (req: Request, res: Response): Promise<Response> => {
-    return
+    const users = await this.users().find();
+    return res.status(200).send({'code': 200, 'data': users})
   }
   static create = async (req: Request, res: Response): Promise<Response> => {
     const { name, lastName, nationalCode, role, phoneNumber } = req.body;
@@ -40,6 +41,8 @@ class AdminUserController {
     user.nationalCode = nationalCode
     user.role = role
     user.phoneNumber = phoneNumber
+    user.password = '12345678'
+    await user.hashPassword();
     const errors = await validate(user);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -110,7 +113,7 @@ class AdminUserController {
       return;
     }
     try{
-      await this.services().delete(user.id);
+      await this.users().delete(user.id);
     }catch (e){
       res.status(409).send("error try again later");
     }

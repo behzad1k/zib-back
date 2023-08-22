@@ -38,13 +38,12 @@ export class User {
   @Column({
     nullable: true
   })
-  @Length(4, 8)
   tmpCode: string;
 
   @Column({
     nullable: true
   })
-  @Length(4, 8)
+  @Length(8, 11)
   nationalCode: string;
 
   @Column()

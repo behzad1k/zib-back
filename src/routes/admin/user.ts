@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Router } from "express";
-import UserController from "../controllers/UserController";
-import AuthController from "../controllers/AuthController";
+import AdminServiceController from "../../controllers/admin/AdminServiceController";
+import AdminUserController from "../../controllers/admin/AdminUserController";
+import AuthController from "../../controllers/AuthController";
+import UserController from "../../controllers/UserController";
 
-export class UserRoutes {
+export class AdminUserRoutes {
   public router: Router;
   public authController: AuthController = new AuthController();
 
@@ -14,8 +16,9 @@ export class UserRoutes {
   }
 
   routes() {
-    this.router.get("/", this.authController.authenticateJWT, UserController.getUser);
-    this.router.delete("/me", this.authController.authenticateJWT, UserController.deleteUser);
-    this.router.put("/changePassword", this.authController.authenticateJWT, UserController.changePassword);
+    this.router.get("", AdminUserController.index);
+    this.router.post("", AdminUserController.create);
+    this.router.put("", AdminUserController.update);
+    this.router.delete("", AdminUserController.delete);
   }
 }
