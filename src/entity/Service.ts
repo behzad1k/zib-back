@@ -46,9 +46,9 @@ export class Service {
   orders: Order[]
 
   @OneToMany(() => Service , service => service.parent)
-  children: Service[];
+  attributes: Service[];
 
-  @ManyToOne(() => Service, service => service.children)
+  @ManyToOne(() => Service, service => service.attributes)
   @JoinColumn({name: 'parentId', referencedColumnName: 'id'})
   parent: Service
   // @ManyToMany(() => User,(user) => user.likedTweaks)

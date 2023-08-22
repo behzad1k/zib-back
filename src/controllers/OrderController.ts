@@ -6,6 +6,7 @@ import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
 import { orderStatuses } from "../utils/consts";
+import { omit } from "../utils/funs";
 
 class OrderController {
 
@@ -54,7 +55,8 @@ class OrderController {
     try {
       attributeObj = await this.services().findOneOrFail({
         where: {
-          slug: attribute
+          slug: attribute,
+          parentId: serviceObj.id
         }
       });
     } catch (error) {
@@ -62,11 +64,12 @@ class OrderController {
       return;
     }
     const order = new Order();
-    order.price = serviceObj.price
+    order.price = serviceObj.price + attributeObj?.price
     order.service = serviceObj
     order.user = user
     order.status = orderStatuses.CREATED
     order.attribute = attributeObj
+    // order.
     const errors = await validate(order);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -79,7 +82,8 @@ class OrderController {
       res.status(409).send({"code": 409});
       return;
     }
-    return res.status(201).send({ code: 201, data: order});
+    const finalOrder = omit(['user'],order)
+    return res.status(201).send({ code: 201, data: finalOrder});
   };
 
 }

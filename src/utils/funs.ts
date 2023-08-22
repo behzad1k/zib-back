@@ -40,3 +40,11 @@ export const omit = (keys, obj) => {
     const { [keys.pop()]: omitted, ...rest } = obj;
     return omit(keys, rest);
 }
+
+export const getObjectValue = (object: any, value: any) => {
+    try{
+        return object[value]
+    }catch (e){
+        return
+    }
+}

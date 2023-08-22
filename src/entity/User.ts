@@ -34,11 +34,18 @@ export class User {
   })
   @Length(4, 100)
   lastName: string;
+
   @Column({
     nullable: true
   })
   @Length(4, 8)
   tmpCode: string;
+
+  @Column({
+    nullable: true
+  })
+  @Length(4, 8)
+  nationalCode: string;
 
   @Column()
   @Length(4, 100)
@@ -56,7 +63,6 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updatedAt: Date;
-
 
   @OneToMany(() => Address , address => address.user, { eager: true })
   addresses: Address[];

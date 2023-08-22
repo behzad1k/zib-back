@@ -18,6 +18,11 @@ export class Order {
   discount?: number
 
   @Column({
+    default: 0
+  })
+  transportation?: number
+
+  @Column({
     nullable: true
   })
   userId?: number

@@ -13,6 +13,6 @@ export class OrderRoutes {
 
   routes() {
     this.router.get("/", OrderController.index);
-    this.router.get("/create", OrderController.create);
+    this.router.post("/create", OrderController.create);
   }
 }

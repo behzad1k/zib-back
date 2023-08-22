@@ -10,6 +10,6 @@ export class AdminOrderRoutes {
   }
 
   routes() {
-    this.router.put("/updateStatus", AdminOrderController.updateStatus);
+    this.router.put("/update", AdminOrderController.update);
   }
 }
