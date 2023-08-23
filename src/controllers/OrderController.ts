@@ -144,7 +144,7 @@ class OrderController {
       orderObj.worker = user
     }
     else{
-      orderObj.status = "CREATED"
+      orderObj.status = "PAID"
       orderObj.worker = null
     }
     try {
