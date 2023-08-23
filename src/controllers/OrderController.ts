@@ -148,6 +148,48 @@ class OrderController {
     return res.status(200).send({code: 200, data: ""})
   }
 
+  static cart = async (req: Request,res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const id: number = token.userId;
+    let user;
+    try {
+      user = await this.users().findOneOrFail(id,{
+        relations: ['orders']
+      });
+    }
+    catch (error) {
+      res.status(400).send({code: 400, data: "Invalid UserId"});
+      return;
+    }
+    const finalOrders = user.orders.filter((value) => value.inCart === true)
+    return res.status(200).send({code: 200, data: finalOrders})
+  }
+
+  static pay = async (req: Request, res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const userId: number = token.userId;
+    let user, orderObj
+    try {
+      user = await this.users().findOneOrFail(userId,{
+        relations: ['orders']
+      });
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid User"});
+      return;
+    }
+    try {
+      user.orders.map((value: Order) => {
+        this.orders().update(value.id, {
+          inCart: false,
+          status: "PAID"
+        })
+      })
+      return res.status(200).send({code: 200, data: ''})
+    }catch (e){
+      console.log(e)
+      res.status(409).send({code: 409, data:"error try again later"});
+    }
+  }
 }
 
 export default OrderController;

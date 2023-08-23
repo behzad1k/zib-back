@@ -62,6 +62,11 @@ export class Order {
   @Column()
   time: string
 
+  @Column({
+    default: true
+  })
+  inCart: boolean
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

@@ -184,22 +184,5 @@ class UserController {
     })
   }
 
-  static getCart = async (req: Request,res: Response): Promise<Response> => {
-    const token: any = jwtDecode(req.headers.authorization);
-    const id: number = token.userId;
-    let user;
-    try {
-      user = await this.users().findOneOrFail(id,{
-        relations: ['orders']
-      });
-    }
-    catch (error) {
-      res.status(400).send({code: 400, data: "Invalid UserId"});
-      return;
-    }
-    const finalOrders = user.orders.filter((value) => value.status !== 'ASSIGNED' && value.status !== 'DONE')
-    console.log(finalOrders);
-    return res.status(200).send({code: 200, data: finalOrders})
-  }
 }
 export default UserController;

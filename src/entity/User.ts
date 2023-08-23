@@ -71,10 +71,7 @@ export class User {
 
   @OneToMany(() => Order, order => order.worker, { nullable: true})
   jobs: Order[]
-  //
-  // @ManyToMany(() => Service,(tweak) => tweak.likes)
-  // @JoinTable({name:'like'})
-  // likedTweaks : Service[];
+
 
   // eslint-disable-next-line @typescript-eslint/require-await
   hashPassword = async (): Promise<void> => {
