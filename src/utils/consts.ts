@@ -8,7 +8,7 @@ export const roles = {
 export const orderStatuses = {
   CREATED: 'ساخته شد',
   ASSIGNED: 'محول شد',
-  PENDING: 'در انتظار تایید',
+  ACCEPTED: 'قبول شد',
   CANCELED: 'لفو شد',
   DONE: 'کامل شد'
 }

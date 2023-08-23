@@ -5,6 +5,8 @@ import ServiceController from "../controllers/ServiceController";
 
 export class OrderRoutes {
   public router: Router;
+  public authController: AuthController = new AuthController();
+
 
   constructor() {
     this.router = Router();
@@ -12,7 +14,8 @@ export class OrderRoutes {
   }
 
   routes() {
-    this.router.get("/", OrderController.index);
-    this.router.post("/create", OrderController.create);
+    this.router.get("", OrderController.index);
+    this.router.post("", OrderController.create);
+    this.router.put("", this.authController.authorizeJWTWorker, OrderController.update);
   }
 }

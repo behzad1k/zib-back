@@ -101,13 +101,52 @@ class OrderController {
     try {
       await this.orders().save(order);
     } catch (e) {
-      console.log(e)
       res.status(409).send({"code": 409});
       return;
     }
     const finalOrder = omit(['user'],order)
     return res.status(201).send({ code: 201, data: finalOrder});
   };
+
+  static update = async (req: Request, res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const userId: number = token.userId;
+    let user, orderObj
+    try {
+      user = await this.users().findOneOrFail(userId);
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid User"});
+      return;
+    }
+    const { orderId, accept } = req.body;
+    try {
+      orderObj = await this.orders().findOneOrFail({
+        where: {
+          id: orderId,
+          status: 'ASSIGNED',
+          workerId: user.id,
+        }
+      });
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid Order"});
+      return;
+    }
+    if (accept){
+      orderObj.status = "ACCEPTED"
+      orderObj.worker = user
+    }
+    else{
+      orderObj.status = "CREATED"
+      orderObj.worker = null
+    }
+    try {
+      await this.orders().save(orderObj);
+    } catch (e) {
+      res.status(409).send("error try again later");
+      return;
+    }
+    return res.status(200).send({code: 200, data: ""})
+  }
 
 }
 

@@ -29,7 +29,9 @@ export class Address {
   @Length(3, 100)
   description: string;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   phoneNumber: string;
 
   @Column()
