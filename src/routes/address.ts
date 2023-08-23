@@ -14,9 +14,9 @@ export class AddressRoutes {
   routes() {
 
     // Get own user
-    this.router.get("/", AddressController.index);
-    this.router.post("/create", this.authController.authorizeJWT, AddressController.create);
-    this.router.put("/update", this.authController.authorizeJWT, AddressController.update);
-    this.router.delete("/delete", this.authController.authorizeJWT, AddressController.delete);
+    this.router.get("", AddressController.index);
+    this.router.post("", this.authController.authorizeJWT, AddressController.create);
+    this.router.put("", this.authController.authorizeJWT, AddressController.update);
+    this.router.delete("", this.authController.authorizeJWT, AddressController.delete);
   }
 }

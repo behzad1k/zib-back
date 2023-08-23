@@ -23,17 +23,17 @@ class AdminUserController {
         phoneNumber: phoneNumber
       }
     })){
-      return res.status(400).send({"code": 400, 'message': 'Duplicate PhoneNumber'})
+      return res.status(400).send({"code": 400, 'data': 'Duplicate PhoneNumber'})
     }
     if (!nationalCode && await this.users().findOne({
       where: {
         nationalCode: nationalCode
       }
     })){
-      return res.status(400).send({"code": 400, 'message': 'Duplicate NationalCode'})
+      return res.status(400).send({"code": 400, 'data': 'Duplicate NationalCode'})
     }
     if (!getObjectValue(roles,role)){
-      return res.status(400).send({"code": 400, 'message': 'Invalid Role'})
+      return res.status(400).send({"code": 400, 'data': 'Invalid Role'})
     }
     const user = new User();
     user.name = name
@@ -63,7 +63,7 @@ class AdminUserController {
     try{
       user = await this.users().findOneOrFail(userId)
     }catch (e){
-      return res.status(400).send({"code": 400, 'message': 'Invalid UserId'})
+      return res.status(400).send({"code": 400, 'data': 'Invalid UserId'})
     }
     if (!phoneNumber && await this.users().findOne({
       where: {
@@ -71,7 +71,7 @@ class AdminUserController {
         phoneNumber: phoneNumber
       }
     })){
-      return res.status(400).send({"code": 400, 'message': 'Duplicate PhoneNumber'})
+      return res.status(400).send({"code": 400, 'data': 'Duplicate PhoneNumber'})
     }
     if (!nationalCode && await this.users().findOne({
       where: {
@@ -79,10 +79,10 @@ class AdminUserController {
         nationalCode: nationalCode
       }
     })){
-      return res.status(400).send({"code": 400, 'message': 'Duplicate NationalCode'})
+      return res.status(400).send({"code": 400, 'data': 'Duplicate NationalCode'})
     }
     if (!getObjectValue(roles,role)){
-      return res.status(400).send({"code": 400, 'message': 'Invalid Status'})
+      return res.status(400).send({"code": 400, 'data': 'Invalid Status'})
     }
     if (name)
       user.name = name
@@ -122,7 +122,7 @@ class AdminUserController {
     }catch (e){
       res.status(409).send("error try again later");
     }
-    return res.status(204).send();
+    return res.status(204).send({code: 204, data: "Success"});
   };
 
 }

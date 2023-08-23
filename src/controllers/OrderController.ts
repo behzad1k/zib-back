@@ -25,7 +25,14 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
     }
-    const orders = user.orders;
+    let orders = user.orders;
+    if (user.role === 'WORKER'){
+      orders = this.orders().find({
+        where: {
+          workerId: user.id
+        }
+      })
+    }
     return res.status(200).send({
       code: 200,
       data: orders
