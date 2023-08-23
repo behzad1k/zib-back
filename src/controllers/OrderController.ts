@@ -31,14 +31,14 @@ class OrderController {
         where: {
           workerId: user.id
         },
-        relations: ['attribute', 'service']
+        relations: ['attribute', 'service', 'address']
       })
     }else{
       orders = await this.orders().find({
         where: {
           userId: user.id
         },
-        relations: ['attribute', 'service']
+        relations: ['attribute', 'service', 'address']
       })
     }
     return res.status(200).send({
@@ -174,7 +174,7 @@ class OrderController {
         userId: user.id,
         inCart: true
       },
-      relations: ['attribute', 'service']
+      relations: ['attribute', 'service', 'address']
     })
     return res.status(200).send({code: 200, data: orders})
   }

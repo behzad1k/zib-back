@@ -84,8 +84,11 @@ class UserController {
     }
 
     return res.status(200).send({
-      user: user,
-      token: newToken
+      code: 200,
+      data: {
+        user: user,
+        token: newToken
+      }
     });
   }
 
