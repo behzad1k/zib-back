@@ -47,11 +47,16 @@ class AdminAddressController {
     } catch (error) {
       return res.status(400).send({code: 400, data:"Invalid Id"});
     }
-    address.title = title;
-    address.description = description;
-    address.longitude = longitude;
-    address.latitude = latitude;
-    address.phoneNumber = phoneNumber;
+    if (title)
+      address.title = title;
+    if (description)
+      address.description = description;
+    if (longitude)
+      address.longitude = longitude;
+    if (latitude)
+      address.latitude = latitude;
+    if (phoneNumber)
+      address.phoneNumber = phoneNumber;
     const errors = await validate(address);
     if (errors.length > 0) {
       return res.status(400).send(errors);

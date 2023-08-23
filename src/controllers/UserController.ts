@@ -1,3 +1,4 @@
+import { CANCELLED } from "dns";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
@@ -138,38 +139,67 @@ class UserController {
     return res.status(204).send();
   };
 
-  static deleteUser = async (req: Request, res: Response): Promise<Response> => {
-    const { id } = req.body;
-    const userRepository = getRepository(User);
-    try {
-      await userRepository.findOneOrFail(id);
-    } catch (error) {
-      res.status(400).send("Invalid id");
-      return;
+  static update = async (req: Request,res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const id: number = token.userId;
+    let user;
+    try{
+      user = await this.users().findOneOrFail(id)
+    }catch (e){
+      return res.status(400).send({code: 400, data: "Invalid User"})
     }
+    const {name, lastName, nationalCode, phoneNumber} = req.body;
+    if(name)
+      user.name = name
+    if(lastName)
+      user.lastName = lastName
+    if(nationalCode)
+      user.nationalCode = nationalCode
+    if(phoneNumber)
+      user.phoneNumber = phoneNumber
     try {
-      await userRepository.delete(id);
-    } catch (error) {
-      return res.status(409).send("try again later");
+      await this.users().save(user);
+    } catch (e) {
+      return res.status(409).send({"code": 409});
     }
-    return res.status(204).send();
-  };
-
+    return res.status(200).send({code: 200, user})
+  }
   static getAddresses = async (req: Request,res: Response): Promise<Response> => {
-    const id: number = req.body.id
+    const token: any = jwtDecode(req.headers.authorization);
+    const id: number = token.userId;
     const userRepository = getRepository(User);
     let user;
     try {
-      user = await userRepository.findOneOrFail(id);
+      user = await userRepository.findOneOrFail(id,{
+        relations: ['addresses']
+      });
     }
     catch (error) {
-      res.status(400).send("Invalid id");
+      res.status(400).send({code: 400, data: "Invalid UserId"});
       return;
     }
     return res.status(200).send({
       code: '200',
-      data: user
+      data: user.addresses
     })
+  }
+
+  static getCart = async (req: Request,res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const id: number = token.userId;
+    let user;
+    try {
+      user = await this.users().findOneOrFail(id,{
+        relations: ['orders']
+      });
+    }
+    catch (error) {
+      res.status(400).send({code: 400, data: "Invalid UserId"});
+      return;
+    }
+    const finalOrders = user.orders.filter((value) => value.status !== 'ASSIGNED' && value.status !== 'DONE')
+    console.log(finalOrders);
+    return res.status(200).send({code: 200, data: finalOrders})
   }
 }
 export default UserController;

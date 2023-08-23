@@ -6,8 +6,8 @@ import { Address } from "../entity/Address";
 import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
-import { orderStatuses } from "../utils/consts";
-import { omit } from "../utils/funs";
+import { orderStatuses, times } from "../utils/consts";
+import { getObjectValue, omit } from "../utils/funs";
 
 class OrderController {
 
@@ -74,14 +74,18 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid Attribute"});
       return;
     }
+    if (!getObjectValue(times, time)){
+      return res.status(400).send({ code: 400, data: "Invalid time"})
+    }
     const order = new Order();
     order.price = serviceObj.price + attributeObj?.price
     order.service = serviceObj
     order.user = user
-    order.status = orderStatuses.CREATED
+    order.status = 'CREATED'
     order.attribute = attributeObj
     order.address = addressObj;
-    // order.
+    order.date = date
+    order.time = time
     const errors = await validate(order);
     if (errors.length > 0) {
       res.status(400).send(errors);

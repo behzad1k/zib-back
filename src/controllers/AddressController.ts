@@ -54,11 +54,16 @@ class AddressController {
     if (address.userId !== userId){
       return res.status(403).send({code: 403, data:"Access Forbidden"})
     }
-    address.title = title;
-    address.description = description;
-    address.longitude = longitude;
-    address.latitude = latitude;
-    address.phoneNumber = phoneNumber;
+    if (title)
+      address.title = title;
+    if (description)
+      address.description = description;
+    if (longitude)
+      address.longitude = longitude;
+    if (latitude)
+      address.latitude = latitude;
+    if (phoneNumber)
+      address.phoneNumber = phoneNumber;
     const errors = await validate(address);
     if (errors.length > 0) {
       return res.status(400).send(errors);

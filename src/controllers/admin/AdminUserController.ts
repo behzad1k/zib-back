@@ -84,11 +84,16 @@ class AdminUserController {
     if (!getObjectValue(roles,role)){
       return res.status(400).send({"code": 400, 'message': 'Invalid Status'})
     }
-    user.name = name
-    user.lastName = lastName
-    user.nationalCode = nationalCode
-    user.role = role
-    user.phoneNumber = phoneNumber
+    if (name)
+      user.name = name
+    if (lastName)
+      user.lastName = lastName
+    if(nationalCode)
+      user.nationalCode = nationalCode
+    if (role)
+      user.role = role
+    if (phoneNumber)
+      user.phoneNumber = phoneNumber
     const errors = await validate(user);
     if (errors.length > 0) {
       res.status(400).send(errors);

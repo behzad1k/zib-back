@@ -58,9 +58,12 @@ class AdminServiceController {
       res.status(400).send({code: 400, data:"Invalid Id"});
       return;
     }
-    serviceObj.title = title;
-    serviceObj.description = description;
-    serviceObj.price = parseFloat(price);
+    if (title)
+      serviceObj.title = title;
+    if (description)
+      serviceObj.description = description;
+    if (price)
+      serviceObj.price = parseFloat(price);
     const errors = await validate(serviceObj);
     if (errors.length > 0) {
       return res.status(400).send(errors);

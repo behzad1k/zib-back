@@ -14,8 +14,10 @@ export class UserRoutes {
   }
 
   routes() {
-    this.router.get("/", this.authController.authenticateJWT, UserController.getUser);
-    this.router.delete("/me", this.authController.authenticateJWT, UserController.deleteUser);
+    this.router.get("", this.authController.authenticateJWT, UserController.getUser);
+    this.router.put("", this.authController.authenticateJWT, UserController.update);
+    this.router.get("/cart", this.authController.authenticateJWT, UserController.getCart);
+    this.router.get("/address", this.authController.authenticateJWT, UserController.getAddresses);
     this.router.put("/changePassword", this.authController.authenticateJWT, UserController.changePassword);
   }
 }

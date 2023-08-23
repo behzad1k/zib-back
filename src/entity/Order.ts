@@ -1,4 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from "typeorm";
 import { Address } from "./Address";
 import { Service } from "./Service";
 import { User } from "./User";
@@ -46,6 +55,20 @@ export class Order {
 
   @Column()
   addressId: number
+
+  @Column()
+  date: number
+
+  @Column()
+  time: string
+
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column()
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({name: 'userId', referencedColumnName: 'id'})
