@@ -25,12 +25,20 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
     }
-    let orders = user.orders;
+    let orders;
     if (user.role === 'WORKER'){
       orders = this.orders().find({
         where: {
           workerId: user.id
-        }
+        },
+        relations: ['attribute', 'service']
+      })
+    }else{
+      orders = await this.orders().find({
+        where: {
+          userId: user.id
+        },
+        relations: ['attribute', 'service']
       })
     }
     return res.status(200).send({
@@ -161,8 +169,14 @@ class OrderController {
       res.status(400).send({code: 400, data: "Invalid UserId"});
       return;
     }
-    const finalOrders = user.orders.filter((value) => value.inCart === true)
-    return res.status(200).send({code: 200, data: finalOrders})
+    let orders = await this.orders().find({
+      where: {
+        userId: user.id,
+        inCart: true
+      },
+      relations: ['attribute', 'service']
+    })
+    return res.status(200).send({code: 200, data: orders})
   }
 
   static pay = async (req: Request, res: Response): Promise<Response> => {
