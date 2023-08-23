@@ -12,11 +12,9 @@ export class AddressRoutes {
   }
 
   routes() {
-
-    // Get own user
-    this.router.get("", AddressController.index);
-    this.router.post("", this.authController.authorizeJWT, AddressController.create);
-    this.router.put("", this.authController.authorizeJWT, AddressController.update);
-    this.router.delete("", this.authController.authorizeJWT, AddressController.delete);
+    this.router.get("", this.authController.authenticateJWT, AddressController.index);
+    this.router.post("", this.authController.authenticateJWT, AddressController.create);
+    this.router.put("", this.authController.authenticateJWT, AddressController.update);
+    this.router.delete("", this.authController.authenticateJWT, AddressController.delete);
   }
 }
