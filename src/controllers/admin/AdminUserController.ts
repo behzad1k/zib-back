@@ -13,7 +13,44 @@ class AdminUserController {
   static services = () => getRepository(Service)
 
   static index = async (req: Request, res: Response): Promise<Response> => {
-    const users = await this.users().find();
+    const { type, service } = req.query
+    let users, serviceObj;
+    if (service){
+      serviceObj = await this.services().findOne({
+        where: {
+          slug: service
+        }
+      })
+    }
+    const validType = getObjectValue(roles,type?.toString().toUpperCase())
+    if (serviceObj && validType){
+      users = await this.users().find({
+        where: {
+          serviceId: serviceObj.id,
+          role: validType
+        },
+        relations: ['service']
+      })
+    }
+    else if (validType) {
+      users = await this.users().find({
+        where: {
+          role: validType
+        },
+        relations: ['service']
+      });
+    }
+    else if(serviceObj){
+      users = await this.users().find({
+        where: {
+          serviceId: serviceObj.id,
+        },
+        relations: ['service']
+      })
+    }
+    else {
+      users = await this.users().find();
+    }
     return res.status(200).send({'code': 200, 'data': users})
   }
   static create = async (req: Request, res: Response): Promise<Response> => {

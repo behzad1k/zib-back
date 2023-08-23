@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Length } from "class-validator";
 import { Order } from "./Order";
+import { User } from "./User";
 
 @Entity()
 export class Service {
@@ -51,6 +52,9 @@ export class Service {
   @ManyToOne(() => Service, service => service.attributes)
   @JoinColumn({name: 'parentId', referencedColumnName: 'id'})
   parent: Service
+
+  @OneToMany(() => User, user => user.service)
+  users: Service
   // @ManyToMany(() => User,(user) => user.likedTweaks)
   // @JoinTable({
   //   name: "like",

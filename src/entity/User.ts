@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  JoinColumn, ManyToMany, JoinTable, IsNull
+  JoinColumn, ManyToMany, JoinTable, IsNull, ManyToOne
 } from "typeorm";
 import { Length, IsNotEmpty, IsEmail } from "class-validator";
 import * as bcrypt from "bcryptjs";
@@ -55,6 +55,11 @@ export class User {
   @IsNotEmpty()
   role: string;
 
+  @Column({
+    nullable: true,
+    default: null
+  })
+  serviceId: number
   @Column()
   @CreateDateColumn()
   createdAt: Date;
@@ -72,7 +77,12 @@ export class User {
   @OneToMany(() => Order, order => order.worker, { nullable: true})
   jobs: Order[]
 
-
+  @ManyToOne(() => Service, service => service.users)
+  @JoinColumn({
+    name: 'serviceId',
+    referencedColumnName: 'id'
+  })
+  service: Service
   // eslint-disable-next-line @typescript-eslint/require-await
   hashPassword = async (): Promise<void> => {
     this.password = bcrypt.hashSync(this.password, 10);
