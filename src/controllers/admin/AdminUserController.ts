@@ -54,7 +54,8 @@ class AdminUserController {
     return res.status(200).send({'code': 200, 'data': users})
   }
   static create = async (req: Request, res: Response): Promise<Response> => {
-    const { name, lastName, nationalCode, role, phoneNumber } = req.body;
+    const { name, lastName, nationalCode, role, phoneNumber, service } = req.body;
+    let serviceObj;
     if (!phoneNumber && await this.users().findOne({
       where: {
         phoneNumber: phoneNumber
@@ -73,6 +74,16 @@ class AdminUserController {
       return res.status(400).send({"code": 400, 'data': 'Invalid Role'})
     }
     const user = new User();
+    if (service){
+      try{
+        serviceObj = await this.services().findOneOrFail({
+          slug: service
+        })
+        user.service = serviceObj
+      }catch(e){
+        return res.status(400).send({"code": 400, 'data': 'Invalid Service'})
+      }
+    }
     user.name = name
     user.lastName = lastName
     user.nationalCode = nationalCode

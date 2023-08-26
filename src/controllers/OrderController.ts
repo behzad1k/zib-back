@@ -205,6 +205,9 @@ class OrderController {
       res.status(409).send({code: 409, data:"error try again later"});
     }
   }
+  static delete = async (req: Request, res: Response): Promise<Response> => {
+    return
+  }
 }
 
 export default OrderController;
