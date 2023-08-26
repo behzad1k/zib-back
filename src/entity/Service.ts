@@ -16,11 +16,9 @@ export class Service {
   id: number;
 
   @Column()
-  @Length(3, 100)
   title: string;
 
   @Column()
-  @Length(3, 100)
   slug: string;
 
   @Column()

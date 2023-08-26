@@ -34,13 +34,14 @@ export default class AuthController {
   }
   public authorizeJWTWorker(req: Request, res: Response, next: NextFunction): void {
     passport.authenticate("jwt", (err, user) => {
+      console.log(user)
       if (err) {
         return res.status(401).json({ status: "error", code: "401" });
       }
       if (!user) {
         return res.status(401).json({ status: "error", code: "401" });
       }
-      if (user.role !== roles.SUPER_ADMIN && user.role !== roles.OPERATOR) {
+      if (user.role !== roles.WORKER) {
         return res.status(403).json({ status: "error", code: "403" });
       } else {
         return next();

@@ -31,7 +31,7 @@ class OrderController {
         where: {
           workerId: user.id
         },
-        relations: ['attribute', 'service', 'address']
+        relations: ['attribute', 'service', 'address', 'worker']
       })
     }else{
       orders = await this.orders().find({
@@ -39,7 +39,7 @@ class OrderController {
           userId: user.id,
           inCart: false
         },
-        relations: ['attribute', 'service', 'address']
+        relations: ['attribute', 'service', 'address', 'worker']
       })
     }
     return res.status(200).send({
@@ -206,7 +206,33 @@ class OrderController {
     }
   }
   static delete = async (req: Request, res: Response): Promise<Response> => {
-    return
+    const token: any = jwtDecode(req.headers.authorization);
+    const userId: number = token.userId;
+    const {orderId} = req.body;
+    let user, orderObj
+    try {
+      user = await this.users().findOneOrFail(userId,{
+        relations: ['orders']
+      });
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid User"});
+      return;
+    }
+    try {
+      orderObj = await this.orders().findOneOrFail(orderId)
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid Order"});
+      return;
+    }
+    if (user.id != orderObj.userId){
+      return res.status(403).send({code: 403, body: "Access Forbiden"})
+    }
+    try{
+      await this.orders().delete(orderObj.id);
+    }catch (e){
+      return res.status(409).send("error try again later");
+    }
+    return res.status(200).send({code: 200})
   }
 }
 

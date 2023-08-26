@@ -30,7 +30,7 @@ class AdminServiceController {
     service.description = description;
     service.price = parseFloat(price);
     service.slug = await getSlug(this.services(),title)
-    service.parentId = parentObj?.id
+    service.parentId = parentObj?.id || null
     const errors = await validate(service);
     if (errors.length > 0) {
       res.status(400).send(errors);
