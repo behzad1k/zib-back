@@ -27,7 +27,7 @@ class OrderController {
     }
     let orders;
     if (user.role === 'WORKER'){
-      orders = this.orders().find({
+      orders = await this.orders().find({
         where: {
           workerId: user.id
         },
@@ -36,7 +36,8 @@ class OrderController {
     }else{
       orders = await this.orders().find({
         where: {
-          userId: user.id
+          userId: user.id,
+          inCart: false
         },
         relations: ['attribute', 'service', 'address']
       })

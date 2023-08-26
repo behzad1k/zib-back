@@ -53,11 +53,13 @@ class UserController {
     user.tmpCode = code;
     user = await userRepository.save(user);
     token = await UserController.signJWT(user,'2m');
+    console.log(code)
     return res.status(200).send({
       code: code,
       token: token
     });
   };
+  // TODO: auth check doesnt check the token
 
   static authCheck = async (req: Request, res: Response): Promise<Response> => {
     const {token, code} = req.body
