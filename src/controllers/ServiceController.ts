@@ -4,10 +4,10 @@ import { validate } from "class-validator";
 import {Service} from "../entity/Service";
 
 class ServiceController {
+  static services = () => getRepository(Service)
 
   static index = async (req: Request, res: Response): Promise<Response> => {
-    const serviceRepository = getRepository(Service);
-    const services = await serviceRepository.find({
+    const services = await this.services().find({
       relations: ['attributes'],
       where: {
         parentId: null

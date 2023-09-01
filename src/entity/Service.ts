@@ -34,6 +34,9 @@ export class Service {
   price: number;
 
   @Column()
+  sections: number;
+
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 

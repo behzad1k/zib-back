@@ -14,6 +14,7 @@ import { Address } from "./Address";
 import { Order } from "./Order";
 import { Service } from "./Service";
 import { Like } from "./Like";
+import { WorkerOffs } from './WorkerOffs';
 
 @Entity()
 // @Unique(["email","username"])
@@ -60,6 +61,7 @@ export class User {
     default: null
   })
   serviceId: number
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;
@@ -76,6 +78,9 @@ export class User {
 
   @OneToMany(() => Order, order => order.worker, { nullable: true})
   jobs: Order[]
+
+  @OneToMany(() => WorkerOffs, userOffs => userOffs.worker, { nullable: true})
+  workerOffs: WorkerOffs[]
 
   @ManyToOne(() => Service, service => service.users)
   @JoinColumn({

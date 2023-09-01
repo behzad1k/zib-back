@@ -29,7 +29,6 @@ class OrderController {
     if (user.role === 'WORKER'){
       orders = await this.orders().find({
         where: {
-          workerId: user.id
         },
         relations: ['attribute', 'service', 'address', 'worker']
       })
