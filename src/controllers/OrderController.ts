@@ -20,7 +20,7 @@ class OrderController {
   static index = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    const usedr = await this.users().find();
+    const users = await this.users().find();
     let user;
     try {
       user = await this.users().findOneOrFail(userId);
@@ -33,7 +33,7 @@ class OrderController {
       orders = await this.orders().find({
         where: {
         },
-        relations: ['attribute', 'service', 'address', 'worker']
+        relations: ['attributes', 'service', 'address', 'worker']
       })
     }else{
       orders = await this.orders().find({
@@ -41,7 +41,7 @@ class OrderController {
           userId: user.id,
           inCart: false
         },
-        relations: ['attribute', 'service', 'address', 'worker']
+        relations: ['attributes', 'service', 'address', 'worker']
       })
     }
     return res.status(200).send({
@@ -230,7 +230,7 @@ class OrderController {
         userId: user.id,
         inCart: true
       },
-      relations: ['attribute', 'service', 'address']
+      relations: ['attributes', 'service', 'address']
     })
     return res.status(200).send({code: 200, data: orders})
   }
@@ -280,7 +280,7 @@ class OrderController {
       return;
     }
     if (user.id != orderObj.userId){
-      return res.status(403).send({code: 403, body: "Access Forbiden"})
+      return res.status(403).send({code: 403, body: "Access Forbidden"})
     }
     try{
       await this.orders().delete(orderObj.id);

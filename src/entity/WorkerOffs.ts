@@ -31,4 +31,5 @@ export class WorkerOffs {
   @ManyToOne(() => Order, order => order.worker)
   @JoinColumn({ name: 'orderId', referencedColumnName: 'id'})
   order: Order
+
 }
