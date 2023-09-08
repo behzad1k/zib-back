@@ -15,7 +15,7 @@ class AdminOrderController {
   static services = () => getRepository(Service)
   static index = async (req: Request, res: Response): Promise<Response> => {
     const orders = await this.orders().find({
-      relations: ['worker', 'service', 'address', 'attribute']
+      relations: ['worker', 'service', 'address', 'attributes']
     });
     return res.status(200).send({
       code: 200,

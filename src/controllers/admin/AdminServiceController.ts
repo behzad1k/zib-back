@@ -12,7 +12,7 @@ class AdminServiceController {
   static services = () => getRepository(Service)
 
   static create = async (req: Request, res: Response): Promise<Response> => {
-    const { title, description, price, parent } = req.body;
+    const { title, description, price, parent, section } = req.body;
     let parentObj;
     if (parent){
       try {
@@ -30,6 +30,7 @@ class AdminServiceController {
     service.description = description;
     service.price = parseFloat(price);
     service.slug = await getSlug(this.services(),title)
+    service.section = section
     service.parentId = parentObj?.id || null
     const errors = await validate(service);
     if (errors.length > 0) {
@@ -46,7 +47,7 @@ class AdminServiceController {
   };
 
   static update = async (req: Request, res: Response): Promise<Response> => {
-    const { service, title, description, price } = req.body;
+    const { service, title, description, price, section } = req.body;
     let serviceObj: Service;
     try {
       serviceObj = await this.services().findOneOrFail({
@@ -64,6 +65,8 @@ class AdminServiceController {
       serviceObj.description = description;
     if (price)
       serviceObj.price = parseFloat(price);
+    if (section)
+      serviceObj.section = section
     const errors = await validate(serviceObj);
     if (errors.length > 0) {
       return res.status(400).send(errors);

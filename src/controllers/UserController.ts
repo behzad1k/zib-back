@@ -206,9 +206,6 @@ class UserController {
     return res.status(200).send({code: 200, data: workerOff})
   }
 
-  static findFreeWorker = async () => {
-
-  }
 }
 
 export default UserController;

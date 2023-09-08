@@ -7,7 +7,6 @@ import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
 import { WorkerOffs } from '../entity/WorkerOffs';
-import { orderStatuses, times } from "../utils/consts";
 import { getObjectValue, omit } from "../utils/funs";
 
 class OrderController {
@@ -76,13 +75,23 @@ class OrderController {
       res.status(400).send({ code: 400, data:"Invalid Address" });
       return;
     }
+
     const workers = await this.users().find({
       where: {
         serviceId: service.id,
         district: address.district
-      }
+      },
+      relations: ['workerOffs']
     })
+    // return res.status(420).send({ data: await this.findFreeWorker(workers) })
+
     return res.status(200).send({ code: 200, data: { workers } })
+  }
+  static findFreeWorker = async (workers: User[]) => {
+    const allWorkerOffs = []
+    workers.map((worker) => allWorkerOffs.push())
+    // workers.sort((a,b) => a.workerOffs.da e )
+    return new Date().getTime();
   }
 
   static create = async (req: Request, res: Response): Promise<Response> => {
@@ -174,7 +183,7 @@ class OrderController {
       workerOff.toTime = order.toTime;
       await this.workerOffs().save(workerOff);
     } catch (e) {
-      console.log(e);
+      console.log(e); //todo: delete order if created
       res.status(409).send({"code": 409});
       return;
     }
