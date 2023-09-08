@@ -4,6 +4,7 @@ import { validate } from "class-validator";
 import { Order } from "../../entity/Order";
 import { Service } from "../../entity/Service";
 import { User } from "../../entity/User";
+import { WorkerOffs } from '../../entity/WorkerOffs';
 import { roles } from "../../utils/consts";
 import { getObjectValue, getSlug } from "../../utils/funs";
 
@@ -11,6 +12,7 @@ class AdminUserController {
   static users = () => getRepository(User)
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
+  static workerOffs = () => getRepository(WorkerOffs)
 
   static index = async (req: Request, res: Response): Promise<Response> => {
     const { type, service } = req.query
@@ -172,7 +174,31 @@ class AdminUserController {
     }
     return res.status(204).send({code: 204, data: "Success"});
   };
-
+  static workerOff = async (req: Request, res: Response): Promise<Response> => {
+    const { workerId, date, fromTime, toTime } = req.body;
+    let worker;
+    try{
+      worker = await this.users().findOneOrFail(workerId)
+    }catch (e){
+      return res.status(400).send({ code: 400, data: "Invalid WorkerId" })
+    }
+    const workerOff = new WorkerOffs();
+    workerOff.workerId = workerId
+    workerOff.date = date
+    workerOff.fromTime = fromTime
+    workerOff.toTime = toTime
+    // const errors = await validate(workerOff);
+    // if (errors.length > 0) {
+    //   res.status(400).send(errors);
+    //   return;
+    // }
+    try{
+      await this.workerOffs().save(workerOff)
+    }catch (e){
+      return res.status(409).send({code: 400, data: "error try again later"})
+    }
+    return res.status(200).send({code: 200, data: workerOff})
+  }
 }
 
 export default AdminUserController;
