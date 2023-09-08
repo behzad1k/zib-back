@@ -174,6 +174,7 @@ class AdminUserController {
     }
     return res.status(204).send({code: 204, data: "Success"});
   };
+
   static workerOff = async (req: Request, res: Response): Promise<Response> => {
     const { workerId, date, fromTime, toTime } = req.body;
     let worker;

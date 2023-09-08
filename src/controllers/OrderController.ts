@@ -83,15 +83,21 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
+    // return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
 
     return res.status(200).send({ code: 200, data: { workers } })
   }
   static findFreeWorker = async (workers: User[], section) => {
-    const now = Math.floor(new Date().getTime() / 1000);;
+    let nowHour = new Date().getHours();
+    let nowDate = new Date().getDate();
     const allWorkerOffs = []
+    if (nowHour >= 22 || nowHour < 8)
+      nowHour = 8;
     workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
-    allWorkerOffs.sort((a,b) => b.date - a.date)
+    for (const workerOff of allWorkerOffs) {
+      console.log();
+    }
+    // allWorkerOffs.sort((a,b) => b.date - a.date)
     // allWorkerOffs.filter((value) => value.)
     return new Date().getHours()
   }
