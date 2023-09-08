@@ -6,6 +6,7 @@ import { Address } from "../entity/Address";
 import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
+import { WorkerOffs } from '../entity/WorkerOffs';
 import { orderStatuses, times } from "../utils/consts";
 import { getObjectValue, omit } from "../utils/funs";
 
@@ -15,9 +16,11 @@ class OrderController {
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
   static addresses = () => getRepository(Address)
+  static workerOffs = () => getRepository(WorkerOffs)
   static index = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
+    const usedr = await this.users().find();
     let user;
     try {
       user = await this.users().findOneOrFail(userId);
@@ -46,19 +49,54 @@ class OrderController {
       data: orders
     })
   }
-
-
-  static create = async (req: Request, res: Response): Promise<Response> => {
+  static workers = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    let user, serviceObj, attributeObj, addressObj;
+    const { attributeId, addressId } = req.query;
+    let user, attribute, address;
     try {
       user = await this.users().findOneOrFail(userId);
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
     }
-    const { service, attribute, date, time, addressId } = req.body;
+    try {
+      attribute = await this.services().findOneOrFail(Number(attributeId));
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid Attribute"});
+      return;
+    }
+    try {
+      address = await this.addresses().findOneOrFail(Number(addressId), {
+        where: {
+          userId: user.id
+        }
+      });
+    } catch (error) {
+      res.status(400).send({ code: 400, data:"Invalid Address" });
+      return;
+    }
+    const workers = await this.users().find({
+      where: {
+        serviceId: attribute.parentId,
+        district: address.district
+      },
+      relations: ['workerOffs']
+    })
+    return res.status(200).send({ code: 200, data: { workers } })
+  }
+
+  static create = async (req: Request, res: Response): Promise<Response> => {
+    const token: any = jwtDecode(req.headers.authorization);
+    const userId: number = token.userId;
+    const { service, attribute, date, time, addressId, workerId } = req.body;
+    let user, serviceObj, attributeObj, addressObj, worker;
+    try {
+      user = await this.users().findOneOrFail(userId);
+    } catch (error) {
+      res.status(400).send({code: 400, data:"Invalid User"});
+      return;
+    }
     try {
       addressObj = await this.addresses().findOneOrFail(addressId, {
         where: {
@@ -89,9 +127,19 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid Attribute"});
       return;
     }
+    if (workerId) {
+      try {
+        worker = await this.users().findOneOrFail(workerId);
+      } catch (error) {
+        res.status(400).send({ code: 400, data: 'Invalid User' });
+        return;
+      }
+    }
+
     if (!getObjectValue(times, time)){
       return res.status(400).send({ code: 400, data: "Invalid time"})
     }
+
     const order = new Order();
     order.price = serviceObj.price + attributeObj?.price
     order.service = serviceObj
@@ -101,6 +149,7 @@ class OrderController {
     order.address = addressObj;
     order.date = date
     order.time = time
+    order.worker = worker
     const errors = await validate(order);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -108,6 +157,12 @@ class OrderController {
     }
     try {
       await this.orders().save(order);
+      const workerOff = new WorkerOffs();
+      workerOff.orderId = order.id;
+      workerOff.worker = worker.id;
+      // workerOff.day = order.date;
+      // workerOff.time = order.time;
+      // await this.workerOffs().save();
     } catch (e) {
       res.status(409).send({"code": 409});
       return;

@@ -62,6 +62,12 @@ export class User {
   })
   serviceId: number
 
+  @Column({
+    nullable: true,
+    default: null
+  })
+  district: number
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

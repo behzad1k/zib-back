@@ -25,9 +25,7 @@ export class Service {
   @Length(3, 100)
   description: string;
 
-  @Column({
-    nullable: true
-  })
+  @Column({ nullable: true })
   parentId: string;
 
   @Column()

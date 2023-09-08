@@ -195,7 +195,9 @@ class UserController {
     }
     let worker: User;
     try{
-      worker = await this.users().findOneOrFail(Number(workerId))
+      worker = await this.users().findOneOrFail(Number(workerId),{
+        relations: ['workerOffs']
+      })
     }catch (e){
       return res.status(400).send({code: 400, data: "Invalid WorkerId"})
     }

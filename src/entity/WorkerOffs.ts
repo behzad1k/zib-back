@@ -11,7 +11,7 @@ export class WorkerOffs {
   time: number
 
   @Column()
-  day: Date
+  date: Date
 
   @Column({
     nullable: true

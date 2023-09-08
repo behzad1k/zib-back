@@ -41,6 +41,9 @@ export class Address {
   latitude: string;
 
   @Column()
+  district: number;
+
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 
