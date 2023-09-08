@@ -11,6 +11,13 @@ class AdminServiceController {
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
 
+  static index = async (req: Request, res: Response): Promise<Response> => {
+    const services = await this.services().find();
+    return res.status(200).send({
+      code: 200,
+      data: services
+    })
+  }
   static create = async (req: Request, res: Response): Promise<Response> => {
     const { title, description, price, parent, section } = req.body;
     let parentObj;
@@ -77,11 +84,11 @@ class AdminServiceController {
       res.status(409).send("error try again later");
       return;
     }
-    return res.status(200).send({code: 400, data: serviceObj});
+    return res.status(200).send({code: 200, data: serviceObj});
   };
 
   static delete = async (req: Request, res: Response): Promise<Response> => {
-    const service: number = req.body.service
+    const { service } = req.body
     let serviceObj;
     try {
       serviceObj = await this.services().findOneOrFail({

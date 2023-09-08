@@ -51,7 +51,7 @@ class OrderController {
   static workers = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    const { serviceId, addressId } = req.query;
+    const { serviceId, addressId, section } = req.query;
     let user, service, address;
     try {
       user = await this.users().findOneOrFail(userId);
@@ -83,15 +83,17 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    // return res.status(420).send({ data: await this.findFreeWorker(workers) })
+    return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
 
     return res.status(200).send({ code: 200, data: { workers } })
   }
-  static findFreeWorker = async (workers: User[]) => {
+  static findFreeWorker = async (workers: User[], section) => {
+    const now = Math.floor(new Date().getTime() / 1000);;
     const allWorkerOffs = []
-    workers.map((worker) => allWorkerOffs.push())
-    // workers.sort((a,b) => a.workerOffs.da e )
-    return new Date().getTime();
+    workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
+    allWorkerOffs.sort((a,b) => b.date - a.date)
+    // allWorkerOffs.filter((value) => value.)
+    return new Date().getHours()
   }
 
   static create = async (req: Request, res: Response): Promise<Response> => {
