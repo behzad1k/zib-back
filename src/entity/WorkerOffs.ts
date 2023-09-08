@@ -8,10 +8,13 @@ export class WorkerOffs {
   id: number
 
   @Column()
-  time: number
+  fromTime: number
 
   @Column()
-  date: Date
+  toTime: number
+
+  @Column()
+  date: number
 
   @Column({
     nullable: true

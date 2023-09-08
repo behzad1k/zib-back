@@ -2,12 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  JoinColumn, JoinTable, ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
 import { Address } from "./Address";
 import { Service } from "./Service";
 import { User } from "./User";
@@ -60,7 +60,10 @@ export class Order {
   date: number
 
   @Column()
-  time: string
+  fromTime: number
+
+  @Column()
+  toTime: number
 
   @Column({
     default: true
@@ -79,10 +82,6 @@ export class Order {
   @JoinColumn({name: 'userId', referencedColumnName: 'id'})
   user: User
 
-  @ManyToOne(() => Service, (service) => service.orders, { nullable: true} )
-  @JoinColumn({name: 'attributeId', referencedColumnName: 'id'})
-  attribute: Service
-
   @ManyToOne(() => Service, (service) => service.orders)
   @JoinColumn({name: 'serviceId', referencedColumnName: 'id'})
   service: Service
@@ -96,4 +95,9 @@ export class Order {
   })
   @JoinColumn({name: 'workerId', referencedColumnName: 'id'})
   worker?: User
+
+  @ManyToMany(() => Service, (service) => service.attributeOrders)
+  @JoinTable({name: 'order_attribute'})
+  attributes: Service[]
+
 }

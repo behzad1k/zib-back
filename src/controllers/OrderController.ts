@@ -52,8 +52,8 @@ class OrderController {
   static workers = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    const { attributeId, addressId } = req.query;
-    let user, attribute, address;
+    const { serviceId, addressId } = req.query;
+    let user, service, address;
     try {
       user = await this.users().findOneOrFail(userId);
     } catch (error) {
@@ -61,9 +61,9 @@ class OrderController {
       return;
     }
     try {
-      attribute = await this.services().findOneOrFail(Number(attributeId));
+      service = await this.services().findOneOrFail(Number(serviceId));
     } catch (error) {
-      res.status(400).send({code: 400, data:"Invalid Attribute"});
+      res.status(400).send({code: 400, data:"Invalid Service"});
       return;
     }
     try {
@@ -78,10 +78,9 @@ class OrderController {
     }
     const workers = await this.users().find({
       where: {
-        serviceId: attribute.parentId,
+        serviceId: service.id,
         district: address.district
-      },
-      relations: ['workerOffs']
+      }
     })
     return res.status(200).send({ code: 200, data: { workers } })
   }
@@ -145,10 +144,11 @@ class OrderController {
     order.service = serviceObj
     order.user = user
     order.status = 'CREATED'
-    order.attribute = attributeObj
+    // order.attribute = attributeObj
     order.address = addressObj;
     order.date = date
-    order.time = time
+    order.fromTime = time
+    // order.toTime = time +
     order.worker = worker
     const errors = await validate(order);
     if (errors.length > 0) {
@@ -160,8 +160,9 @@ class OrderController {
       const workerOff = new WorkerOffs();
       workerOff.orderId = order.id;
       workerOff.worker = worker.id;
-      // workerOff.day = order.date;
-      // workerOff.time = order.time;
+      workerOff.date = order.date;
+      workerOff.toTime = order.toTime;
+      workerOff.toTime = order.toTime;
       // await this.workerOffs().save();
     } catch (e) {
       res.status(409).send({"code": 409});

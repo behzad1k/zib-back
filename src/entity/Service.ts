@@ -4,8 +4,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne, JoinColumn, OneToMany
-} from "typeorm";
+  ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable
+} from 'typeorm';
 import { Length } from "class-validator";
 import { Order } from "./Order";
 import { User } from "./User";
@@ -54,6 +54,13 @@ export class Service {
 
   @OneToMany(() => User, user => user.service)
   users: Service
+
+  @ManyToMany(() => Order, order => order.attributes)
+  @JoinTable({
+    name: 'order_attribute'
+  })
+  attributeOrders: Order[]
+
   // @ManyToMany(() => User,(user) => user.likedTweaks)
   // @JoinTable({
   //   name: "like",
