@@ -88,22 +88,13 @@ class OrderController {
   static create = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    const { service, attribute, date, time, addressId, workerId } = req.body;
-    let user, serviceObj, attributeObj, addressObj, worker;
+    const { service, attributes, date, time, addressId, workerId } = req.body;
+    let user, serviceObj, attributeObjs: Service[] = [], addressObj, worker;
     try {
       user = await this.users().findOneOrFail(userId);
     } catch (error) {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
-    }
-    try {
-      addressObj = await this.addresses().findOneOrFail(addressId, {
-        where: {
-          userId: user.id
-        }
-      })
-    }catch (e){
-      return res.status(400).send({'code': 400, data: 'Invalid Address'})
     }
     try {
       serviceObj = await this.services().findOneOrFail({
@@ -116,16 +107,33 @@ class OrderController {
       return;
     }
     try {
-      attributeObj = await this.services().findOneOrFail({
-        where: {
-          slug: attribute,
-          parentId: serviceObj.id
-        }
-      });
+      for (const value in attributes) {
+        attributeObjs.push(
+          await this.services().findOneOrFail({
+            where: {
+              slug: attributes[value],
+              parentId: serviceObj.id
+            }
+          })
+        )
+      }
     } catch (error) {
+      console.log(error);
       res.status(400).send({code: 400, data:"Invalid Attribute"});
       return;
     }
+
+    try {
+      addressObj = await this.addresses().findOneOrFail(addressId, {
+        where: {
+          userId: user.id
+        }
+      })
+    }catch (e){
+      return res.status(400).send({'code': 400, data: 'Invalid Address'})
+    }
+
+
     if (workerId) {
       try {
         worker = await this.users().findOneOrFail(workerId);
@@ -135,20 +143,21 @@ class OrderController {
       }
     }
 
-    if (!getObjectValue(times, time)){
-      return res.status(400).send({ code: 400, data: "Invalid time"})
-    }
-
+    let totalPrice = serviceObj.price, sections = 0;
+    attributeObjs.map((attr) => {
+      totalPrice += attr.price;
+      sections += attr.section;
+    })
     const order = new Order();
-    order.price = serviceObj.price + attributeObj?.price
+    order.attributes = attributeObjs
+    order.price = totalPrice;
     order.service = serviceObj
     order.user = user
     order.status = 'CREATED'
-    // order.attribute = attributeObj
     order.address = addressObj;
     order.date = date
     order.fromTime = time
-    // order.toTime = time +
+    order.toTime = time + sections
     order.worker = worker
     const errors = await validate(order);
     if (errors.length > 0) {
@@ -159,16 +168,17 @@ class OrderController {
       await this.orders().save(order);
       const workerOff = new WorkerOffs();
       workerOff.orderId = order.id;
-      workerOff.worker = worker.id;
+      workerOff.workerId = worker.id;
       workerOff.date = order.date;
+      workerOff.fromTime = order.fromTime;
       workerOff.toTime = order.toTime;
-      workerOff.toTime = order.toTime;
-      // await this.workerOffs().save();
+      await this.workerOffs().save(workerOff);
     } catch (e) {
+      console.log(e);
       res.status(409).send({"code": 409});
       return;
     }
-    const finalOrder = omit(['user'],order)
+    const finalOrder = omit(['user','worker','service','address'],order)
     return res.status(201).send({ code: 201, data: finalOrder});
   };
 

@@ -7,11 +7,13 @@ import { User } from "../entity/User";
 import * as jwt from "jsonwebtoken";
 import * as jwtDecode from "jwt-decode";
 import { Service } from "../entity/Service";
+import { WorkerOffs } from '../entity/WorkerOffs';
 import { generateOTPCode, getUserId, isNumeric, omit } from '../utils/funs';
 import { roles } from "../utils/consts";
 
 class UserController {
   static users = () => getRepository(User)
+  static workerOffs = () => getRepository(WorkerOffs)
 
   // Authentication
   static signJWT = async (user: { id: any; role: any }, exp?): Promise<string> => {
@@ -188,20 +190,24 @@ class UserController {
     })
   }
 
-  static workerOffs = async (req: Request, res: Response): Promise<Response> => {
-    const { workerId } = req.params;
-    if (!workerId || !isNumeric(workerId)) {
-      return res.status(400).send({code: 400, data: "Invalid Params"})
-    }
-    let worker: User;
+  static getWorkerOffs = async (req: Request, res: Response): Promise<Response> => {
+    const { workerId, date } = req.query;
+    let workerOff;
     try{
-      worker = await this.users().findOneOrFail(Number(workerId),{
-        relations: ['workerOffs']
+      workerOff = await this.workerOffs().find({
+        where: {
+          workerId: Number(workerId),
+          date: Number(date)
+        }
       })
     }catch (e){
       return res.status(400).send({code: 400, data: "Invalid WorkerId"})
     }
-    return res.status(200).send({code: 200, data: worker.workerOffs})
+    return res.status(200).send({code: 200, data: workerOff})
+  }
+
+  static findFreeWorker = async () => {
+
   }
 }
 

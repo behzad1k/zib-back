@@ -32,7 +32,7 @@ export class Service {
   price: number;
 
   @Column()
-  sections: number;
+  section: number;
 
   @Column()
   @CreateDateColumn()
