@@ -20,5 +20,6 @@ export class AdminUserRoutes {
     this.router.post("", AdminUserController.create);
     this.router.put("", AdminUserController.update);
     this.router.delete("", AdminUserController.delete);
+    this.router.post("/workerOff", AdminUserController.workerOff);
   }
 }

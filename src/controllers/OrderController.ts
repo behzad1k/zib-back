@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import * as moment from 'jalali-moment';
 import * as jwtDecode from "jwt-decode";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
@@ -83,20 +84,24 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    // return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
+    return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
 
     return res.status(200).send({ code: 200, data: { workers } })
   }
   static findFreeWorker = async (workers: User[], section) => {
-    let nowHour = new Date().getHours();
-    let nowDate = new Date().getDate();
     const allWorkerOffs = []
-    if (nowHour >= 22 || nowHour < 8)
+    let nowHour = new Date().getHours();
+    let nowDate = moment()
+    if (nowHour >= 22) {
       nowHour = 8;
-    workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
-    for (const workerOff of allWorkerOffs) {
-      console.log();
+      nowDate = moment().add(1,'d')
     }
+    if (nowHour < 8)
+      nowHour = 8
+    console.log(moment(1692748953000).format('jYYYY/jMM/jDD'));
+    workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
+    // for (const workerOff of allWorkerOffs) {
+    // }
     // allWorkerOffs.sort((a,b) => b.date - a.date)
     // allWorkerOffs.filter((value) => value.)
     return new Date().getHours()
