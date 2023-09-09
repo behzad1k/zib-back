@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { now } from 'jalali-moment';
 import * as moment from 'jalali-moment';
 import * as jwtDecode from "jwt-decode";
 import { getRepository } from "typeorm";
@@ -84,13 +85,19 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    // return res.status(420).send({ data: await this.findFreeWorker(workers, parseInt(section.toString())) })
-
-    return res.status(200).send({ code: 200, data: { workers } })
+    const nearest = await this.findFreeWorker(workers, parseInt(section.toString()));
+    return res.status(200).send({ code: 200, data: {
+        workers: workers,
+        nearest:{
+          date: nearest.date,
+          workerId: nearest.worker
+        }
+    }})
   }
   static findFreeWorker = async (workers: User[], section: number) => {
+
     const allWorkerOffs = []
-    let nowHour = new Date().getHours();
+    let nowHour = parseInt(moment().add(1,'h').format('HH'))
     let nowDate = moment()
     if (nowHour >= 22) {
       nowHour = 8;
@@ -99,21 +106,38 @@ class OrderController {
     if (nowHour < 8)
       nowHour = 8
     workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
-    let nearestDate, nearestTime, nearestWorker;
+    let nearestDate = moment().add(1,'y'), nearestTime = 23, nearestWorker;
     for (const worker of workers) {
       const userWorkOffs = worker.workerOffs.filter((value) =>  moment(parseInt(value.date)).format('jDD') === nowDate.format('jDD'))
       if (userWorkOffs.length == 0){
         return { worker: worker.id, date: nowDate.format('jYYYY/jMM/jDD') + ' ' + nowHour + '-' + (nowHour + section)}
       }
-      for (const userWorkOff of userWorkOffs) {
-        if (userWorkOff.fromTime <= nowHour && userWorkOff.fromTime > (nowHour + section)){
+      for (let nowHourTmp = (22 - section); nowHourTmp >= nowHour; nowHourTmp--) {
+        for (const userWorkOff of userWorkOffs) {
+          if (userWorkOff.fromTime <= nowHourTmp && userWorkOff.toTime > nowHourTmp) {
+            nowHourTmp = userWorkOff.fromTime;
+            continue;
+          }
 
+          if (userWorkOff.fromTime <= (nowHourTmp - section) && userWorkOff.toTime > (nowHourTmp - section)) {
+            nowHourTmp = userWorkOff.fromTime;
+            continue;
+          }
+          nearestTime = nowHourTmp - section;
+          nearestDate = nowDate
+          nearestWorker = worker.id
         }
       }
     }
-    // allWorkerOffs.sort((a,b) => b.date - a.date)
-    // allWorkerOffs.filter((value) => value.)
-    return new Date().getHours()
+    return { worker: nearestWorker, date: nearestDate.format('jYYYY/jMM/jDD') + ' ' + nearestTime + '-' + (nearestTime + section)}
+  }
+
+  static userFreeHours = (workerOffs: WorkerOffs[]) => {
+    let freeHours = [];
+    workerOffs = workerOffs.sort((a,b) => b.fromTime - a.fromTime)
+    workerOffs.map((value) => {
+      freeHours.push([])
+    })
   }
 
   static create = async (req: Request, res: Response): Promise<Response> => {
