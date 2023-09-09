@@ -49,6 +49,7 @@ class AddressController {
     address.description = description;
     address.longitude = longitude;
     address.latitude = latitude;
+    address.district = 1;
     address.phoneNumber = phoneNumber;
     address.userId = user.id;
     const errors = await validate(address);
@@ -67,7 +68,7 @@ class AddressController {
   static update = async (req: Request, res: Response): Promise<Response> => {
     const token: any = jwtDecode(req.headers.authorization);
     const userId: number = token.userId;
-    const { addressId, title, description, longitude, latitude, phoneNumber } = req.body;
+    const { addressId, title, description, longitude, latitude, phoneNumber, district } = req.body;
     const addressRepository = getRepository(Address);
     let address: Address, user: User;
     try {
@@ -97,6 +98,8 @@ class AddressController {
       address.latitude = latitude;
     if (phoneNumber)
       address.phoneNumber = phoneNumber;
+    if (district)
+      address.district = district
     const errors = await validate(address);
     if (errors.length > 0) {
       return res.status(400).send(errors);
