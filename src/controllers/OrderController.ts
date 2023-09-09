@@ -85,7 +85,7 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    const nearest = await this.findFreeWorker(workers, parseInt(section.toString()));
+    const nearest = await this.findFreeWorker(workers, parseInt(section?.toString()));
     return res.status(200).send({ code: 200, data: {
         workers: workers,
         nearest:{
