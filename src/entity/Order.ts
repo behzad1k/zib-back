@@ -57,7 +57,7 @@ export class Order {
   addressId: number
 
   @Column()
-  date: number
+  date: string
 
   @Column()
   fromTime: number

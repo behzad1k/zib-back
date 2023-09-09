@@ -84,11 +84,11 @@ class OrderController {
       },
       relations: ['workerOffs']
     })
-    return res.status(420).send({ data: await this.findFreeWorker(workers, section) })
+    // return res.status(420).send({ data: await this.findFreeWorker(workers, parseInt(section.toString())) })
 
     return res.status(200).send({ code: 200, data: { workers } })
   }
-  static findFreeWorker = async (workers: User[], section) => {
+  static findFreeWorker = async (workers: User[], section: number) => {
     const allWorkerOffs = []
     let nowHour = new Date().getHours();
     let nowDate = moment()
@@ -98,10 +98,19 @@ class OrderController {
     }
     if (nowHour < 8)
       nowHour = 8
-    console.log(moment(1692748953000).format('jYYYY/jMM/jDD'));
     workers.map((worker) => allWorkerOffs.push(worker.workerOffs))
-    // for (const workerOff of allWorkerOffs) {
-    // }
+    let nearestDate, nearestTime, nearestWorker;
+    for (const worker of workers) {
+      const userWorkOffs = worker.workerOffs.filter((value) =>  moment(parseInt(value.date)).format('jDD') === nowDate.format('jDD'))
+      if (userWorkOffs.length == 0){
+        return { worker: worker.id, date: nowDate.format('jYYYY/jMM/jDD') + ' ' + nowHour + '-' + (nowHour + section)}
+      }
+      for (const userWorkOff of userWorkOffs) {
+        if (userWorkOff.fromTime <= nowHour && userWorkOff.fromTime > (nowHour + section)){
+
+        }
+      }
+    }
     // allWorkerOffs.sort((a,b) => b.date - a.date)
     // allWorkerOffs.filter((value) => value.)
     return new Date().getHours()

@@ -14,7 +14,7 @@ export class WorkerOffs {
   toTime: number
 
   @Column()
-  date: number
+  date: string
 
   @Column({
     nullable: true
