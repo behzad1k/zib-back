@@ -42,7 +42,7 @@
    },
    "scripts": {
       "tsc": "tsc",
-      "start": "set debug=* && ts-node-dev src/index.ts --respawn --transpileOnly",
+      "start": "ts-node-dev src/index.ts --transpileOnly",
       "prod": "tsc && node dist/index.cjs",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
    }

@@ -106,7 +106,7 @@ class AdminServiceController {
     }catch (e){
       res.status(409).send("error try again later");
     }
-    return res.status(204).send();
+    return res.status(204).send({});
   };
 
 }
