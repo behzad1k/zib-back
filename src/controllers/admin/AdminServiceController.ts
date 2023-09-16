@@ -12,7 +12,9 @@ class AdminServiceController {
   static services = () => getRepository(Service)
 
   static index = async (req: Request, res: Response): Promise<Response> => {
-    const services = await this.services().find();
+    const services = await this.services().find({
+      relations: ['parent']
+    });
     return res.status(200).send({
       code: 200,
       data: services

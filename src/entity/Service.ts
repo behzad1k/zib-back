@@ -53,7 +53,7 @@ export class Service {
   parent: Service
 
   @OneToMany(() => User, user => user.service)
-  users: Service
+  users: User[]
 
   @ManyToMany(() => Order, order => order.attributes)
   @JoinTable({

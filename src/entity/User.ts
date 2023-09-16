@@ -64,7 +64,7 @@ export class User {
 
   @Column({
     nullable: true,
-    default: null
+    default: 1
   })
   district: number
 

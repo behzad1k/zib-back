@@ -30,20 +30,26 @@ class OrderController {
       return;
     }
     let orders;
-    if (user.role === 'WORKER'){
-      orders = await this.orders().find({
-        where: {
-        },
-        relations: ['attributes', 'service', 'address', 'worker']
-      })
-    }else{
-      orders = await this.orders().find({
-        where: {
-          userId: user.id,
-          inCart: false
-        },
-        relations: ['attributes', 'service', 'address', 'worker']
-      })
+    try {
+      if (user.role === 'WORKER') {
+        orders = await this.orders().find({
+          where: {
+            workerId: user.id
+          },
+          relations: ['attributes', 'service', 'address', 'worker']
+        })
+      } else {
+        orders = await this.orders().find({
+          where: {
+            userId: user.id,
+            inCart: false
+          },
+          relations: ['attributes', 'service', 'address', 'worker']
+        })
+      }
+    } catch (e){
+      console.log(e);
+      res.status(400).send({code: 400, data:"Unexpected Error"});
     }
     return res.status(200).send({
       code: 200,
@@ -97,7 +103,7 @@ class OrderController {
   static findFreeWorker = async (workers: User[], section: number) => {
 
     const allWorkerOffs = []
-    let nowHour = parseInt(moment().add(1,'h').format('HH'))
+    let nowHour = parseInt(moment().add(2,'h').format('HH'))
     let nowDate = moment()
     if (nowHour >= 22) {
       nowHour = 8;
@@ -130,14 +136,6 @@ class OrderController {
       }
     }
     return { worker: nearestWorker, date: nearestDate.format('jYYYY/jMM/jDD') + ' ' + nearestTime + '-' + (nearestTime + section)}
-  }
-
-  static userFreeHours = (workerOffs: WorkerOffs[]) => {
-    let freeHours = [];
-    workerOffs = workerOffs.sort((a,b) => b.fromTime - a.fromTime)
-    workerOffs.map((value) => {
-      freeHours.push([])
-    })
   }
 
   static create = async (req: Request, res: Response): Promise<Response> => {

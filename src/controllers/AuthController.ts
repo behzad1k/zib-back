@@ -34,7 +34,6 @@ export default class AuthController {
   }
   public authorizeJWTWorker(req: Request, res: Response, next: NextFunction): void {
     passport.authenticate("jwt", (err, user) => {
-      console.log(user)
       if (err) {
         return res.status(401).json({ status: "error", code: "401" });
       }

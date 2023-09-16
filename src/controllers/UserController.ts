@@ -193,15 +193,32 @@ class UserController {
   static getWorkerOffs = async (req: Request, res: Response): Promise<Response> => {
     const { workerId, date } = req.query;
     let workerOff;
-    try{
-      workerOff = await this.workerOffs().find({
-        where: {
-          workerId: Number(workerId),
-          date: Number(date)
-        }
-      })
-    }catch (e){
-      return res.status(400).send({code: 400, data: "Invalid WorkerId"})
+    if (!date){
+      return res
+    }
+    if (workerId){
+      try{
+        workerOff = await this.workerOffs().find({
+          where: {
+            workerId: Number(workerId),
+            date: Number(date)
+          }
+        })
+      }catch (e){
+        return res.status(400).send({code: 400, data: "Invalid WorkerId"})
+      }
+    }else {
+      try{
+        workerOff = await this.workerOffs().find({
+          where: {
+            date: Number(date)
+          }
+        })
+
+      }catch (e){
+        console.log(e);
+        return res.status(400).send({code: 400, data: "Unexpected Error"})
+      }
     }
     return res.status(200).send({code: 200, data: workerOff})
   }

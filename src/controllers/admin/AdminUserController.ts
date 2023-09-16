@@ -17,12 +17,17 @@ class AdminUserController {
   static index = async (req: Request, res: Response): Promise<Response> => {
     const { type, service } = req.query
     let users, serviceObj;
-    if (service){
-      serviceObj = await this.services().findOne({
-        where: {
-          slug: service
-        }
-      })
+    try {
+      if (service) {
+        serviceObj = await this.services().findOne({
+          where: {
+            slug: service
+          }
+        })
+      }
+    }
+    catch (e){
+      return res.status(400).send({code: 400, data: 'Unexpected Error'})
     }
     const validType = getObjectValue(roles,type?.toString().toUpperCase())
     if (serviceObj && validType){

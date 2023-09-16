@@ -2,17 +2,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  ManyToOne, JoinColumn, OneToMany,JoinTable
+  ManyToOne, JoinColumn, OneToMany
 } from "typeorm";
-import { Length, IsNotEmpty, IsEmail } from "class-validator";
-import * as bcrypt from "bcryptjs";
+import { Length } from "class-validator";
 import { Order } from "./Order";
 import {User} from "./User";
-import {Like} from "./Like";
 
 @Entity()
 export class Address {

@@ -14,9 +14,14 @@ class AdminOrderController {
   static orders = () => getRepository(Order)
   static services = () => getRepository(Service)
   static index = async (req: Request, res: Response): Promise<Response> => {
-    const orders = await this.orders().find({
-      relations: ['worker', 'service', 'address', 'attributes']
-    });
+    let orders;
+    try{
+      orders = await this.orders().find({
+        relations: ['worker', 'service', 'address', 'attributes']
+      });
+    }catch (e){
+      return res.status(400).send({code: 400, data: 'Unexpected Error'})
+    }
     return res.status(200).send({
       code: 200,
       data: orders

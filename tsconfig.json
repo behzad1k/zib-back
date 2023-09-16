@@ -4,9 +4,11 @@
          "es5",
          "es6"
       ],
-      "target": "es5",
+      "target": "esnext",
       "module": "commonjs",
       "moduleResolution": "node",
+      "rootDir": "src",
+      "allowJs": true,
       "outDir": "./dist",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
