@@ -4,13 +4,14 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable
+  ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, TreeChildren, Tree, TreeParent
 } from 'typeorm';
 import { Length } from "class-validator";
 import { Order } from "./Order";
 import { User } from "./User";
 
 @Entity()
+@Tree('nested-set')
 export class Service {
   @PrimaryGeneratedColumn()
   id: number;
@@ -45,11 +46,10 @@ export class Service {
   @OneToMany(() => Order, (order) => order.service)
   orders: Order[]
 
-  @OneToMany(() => Service , service => service.parent)
+  @TreeChildren()
   attributes: Service[];
 
-  @ManyToOne(() => Service, service => service.attributes)
-  @JoinColumn({name: 'parentId', referencedColumnName: 'id'})
+  @TreeParent()
   parent: Service
 
   @OneToMany(() => User, user => user.service)
