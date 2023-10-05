@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, IsNull, Not } from 'typeorm';
 import {Service} from "../entity/Service";
 
 class ServiceController {
@@ -7,10 +7,7 @@ class ServiceController {
 
   static index = async (req: Request, res: Response): Promise<Response> => {
     const services = await this.services().find({
-      relations: ['attributes'],
-      where: {
-        parentId: null
-      }
+      relations: ['attributes']
     });
     return res.status(200).send({
       code: 200,
