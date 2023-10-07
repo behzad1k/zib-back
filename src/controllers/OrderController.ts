@@ -195,11 +195,7 @@ class OrderController {
       }
     }else{
       try{
-        worker = await this.users().findOneOrFail({
-          where: {
-            serviceId: service.id
-          }
-        });
+        worker = await this.users().findOneOrFail();
       }
       catch (e){
         res.status(400).send({ code: 400, data: 'Invalid User' });
