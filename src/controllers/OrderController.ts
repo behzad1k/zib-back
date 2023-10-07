@@ -203,6 +203,7 @@ class OrderController {
       }
       catch (e){
         res.status(400).send({ code: 400, data: 'Invalid User' });
+        return;
       }
     }
 
