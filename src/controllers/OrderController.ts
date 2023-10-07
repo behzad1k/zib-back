@@ -165,7 +165,6 @@ class OrderController {
           await this.services().findOneOrFail({
             where: {
               slug: attributes[value],
-              parentId: serviceObj.id
             }
           })
         )
@@ -193,6 +192,17 @@ class OrderController {
       } catch (error) {
         res.status(400).send({ code: 400, data: 'Invalid User' });
         return;
+      }
+    }else{
+      try{
+        worker = await this.users().findOneOrFail({
+          where: {
+            serviceId: service.id
+          }
+        });
+      }
+      catch (e){
+        res.status(400).send({ code: 400, data: 'Invalid User' });
       }
     }
 
