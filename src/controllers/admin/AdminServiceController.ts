@@ -21,7 +21,7 @@ class AdminServiceController {
     })
   }
   static create = async (req: Request, res: Response): Promise<Response> => {
-    const { title, description, price, parent, section } = req.body;
+    const { title, description, price, parent, section, hasColor } = req.body;
     let parentObj;
     if (parent){
       try {
@@ -41,6 +41,8 @@ class AdminServiceController {
     service.slug = await getSlug(this.services(),title)
     service.section = section
     service.parentId = parentObj?.id || null
+    if (hasColor)
+      service.hasColor = hasColor
     const errors = await validate(service);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -56,7 +58,7 @@ class AdminServiceController {
   };
 
   static update = async (req: Request, res: Response): Promise<Response> => {
-    const { service, title, description, price, section } = req.body;
+    const { service, title, description, price, section, hasColor } = req.body;
     let serviceObj: Service;
     try {
       serviceObj = await this.services().findOneOrFail({
@@ -76,6 +78,8 @@ class AdminServiceController {
       serviceObj.price = parseFloat(price);
     if (section)
       serviceObj.section = section
+    if (hasColor)
+      service.hasColor = hasColor
     const errors = await validate(serviceObj);
     if (errors.length > 0) {
       return res.status(400).send(errors);

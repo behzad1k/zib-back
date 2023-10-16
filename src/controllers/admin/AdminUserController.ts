@@ -5,7 +5,8 @@ import { Order } from "../../entity/Order";
 import { Service } from "../../entity/Service";
 import { User } from "../../entity/User";
 import { WorkerOffs } from '../../entity/WorkerOffs';
-import { roles } from "../../utils/consts";
+
+import { roles } from '../../utils/enums';
 import { getObjectValue, getSlug } from "../../utils/funs";
 
 class AdminUserController {

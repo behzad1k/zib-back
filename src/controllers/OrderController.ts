@@ -9,6 +9,7 @@ import { Order } from "../entity/Order";
 import { Service } from "../entity/Service";
 import { User } from "../entity/User";
 import { WorkerOffs } from '../entity/WorkerOffs';
+import { orderStatus } from '../utils/enums';
 import { getObjectValue, omit } from "../utils/funs";
 
 class OrderController {
@@ -218,7 +219,7 @@ class OrderController {
     order.date = date
     order.fromTime = time
     order.toTime = time + sections
-    order.worker = worker
+    // order.worker = worker
     const errors = await validate(order);
     if (errors.length > 0) {
       res.status(400).send(errors);
@@ -226,15 +227,15 @@ class OrderController {
     }
     try {
       await this.orders().save(order);
-      const workerOff = new WorkerOffs();
-      workerOff.orderId = order.id;
-      workerOff.workerId = worker.id;
-      workerOff.date = order.date;
-      workerOff.fromTime = order.fromTime;
-      workerOff.toTime = order.toTime;
-      await this.workerOffs().save(workerOff);
+      // const workerOff = new WorkerOffs();
+      // workerOff.orderId = order.id;
+      // workerOff.workerId = worker.id;
+      // workerOff.date = order.date;
+      // workerOff.fromTime = order.fromTime;
+      // workerOff.toTime = order.toTime;
+      // await this.workerOffs().save(workerOff);
     } catch (e) {
-      console.log(e); //todo: delete order if created
+      console.log(e); //todo: delete order if workeroff not created
       res.status(409).send({"code": 409});
       return;
     }
@@ -252,12 +253,12 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid User"});
       return;
     }
-    const { orderId, accept } = req.body;
+    const { orderId, done } = req.body;
     try {
       orderObj = await this.orders().findOneOrFail({
         where: {
           id: orderId,
-          status: 'ASSIGNED',
+          status: orderStatus.Assigned,
           workerId: user.id,
         }
       });
@@ -265,14 +266,12 @@ class OrderController {
       res.status(400).send({code: 400, data:"Invalid Order"});
       return;
     }
-    if (accept){
-      orderObj.status = "ACCEPTED"
-      orderObj.worker = user
+    if (!done) {
+      return res.status(400).send( {code: 400, data:"Invalid Status"})
     }
-    else{
-      orderObj.status = "PAID"
-      orderObj.worker = null
-    }
+
+    orderObj.status = orderStatus.Done
+
     try {
       await this.orders().save(orderObj);
     } catch (e) {
@@ -321,7 +320,7 @@ class OrderController {
       user.orders.map((value: Order) => {
         this.orders().update(value.id, {
           inCart: false,
-          status: "PAID"
+          status: orderStatus.Paid
         })
       })
       return res.status(200).send({code: 200, data: ''})

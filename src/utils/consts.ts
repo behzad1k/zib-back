@@ -1,18 +1,4 @@
-export const roles = {
-  SUPER_ADMIN: "SUPER_ADMIN",
-  OPERATOR: "OPERATOR",
-  WORKER: "WORKER",
-  USER: "USER",
-};
 
-export const orderStatuses = {
-  CREATED: 'ساخته شد',
-  PAID: 'پرداخت شد',
-  ASSIGNED: 'محول شد',
-  ACCEPTED: 'قبول شد',
-  CANCELED: 'لفو شد',
-  DONE: 'کامل شد'
-}
 
 export const times = {
   '8_10': '8-10',

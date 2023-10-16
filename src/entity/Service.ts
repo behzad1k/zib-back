@@ -32,6 +32,11 @@ export class Service {
   @Column()
   price: number;
 
+  @Column({
+    default: false
+  })
+  hasColor: boolean;
+
   @Column()
   section: number;
 

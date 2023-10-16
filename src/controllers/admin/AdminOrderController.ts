@@ -6,7 +6,8 @@ import { validate } from "class-validator";
 import {Order} from "../../entity/Order";
 import { Service } from "../../entity/Service";
 import { User } from "../../entity/User";
-import { orderStatuses } from "../../utils/consts";
+
+import { orderStatus } from '../../utils/enums';
 import { getObjectValue } from "../../utils/funs";
 
 class AdminOrderController {

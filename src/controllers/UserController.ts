@@ -8,8 +8,8 @@ import * as jwt from "jsonwebtoken";
 import * as jwtDecode from "jwt-decode";
 import { Service } from "../entity/Service";
 import { WorkerOffs } from '../entity/WorkerOffs';
+import { roles } from '../utils/enums';
 import { generateOTPCode, getUserId, isNumeric, omit } from '../utils/funs';
-import { roles } from "../utils/consts";
 
 class UserController {
   static users = () => getRepository(User)

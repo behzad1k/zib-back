@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import * as passport from "passport";
 import "../middlewares/passport";
-import { roles } from "../utils/consts";
+
+import { roles } from '../utils/enums';
 
 export default class AuthController {
   public authenticateJWT(req: Request, res: Response, next: NextFunction): void {
